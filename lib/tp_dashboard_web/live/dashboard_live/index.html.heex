@@ -30,34 +30,4 @@
   </.card>
 </div>
 
-<.modal id="user-settings-modal">
-  <h3>Coucou</h3>
-
-  <.simple_form
-    for={@user_form}
-    phx-change="user-validate"
-    phx-submit={JS.push("user-submit") |> hide_modal("user-settings-modal")}
-  >
-    <.input
-      type="text"
-      field={@user_form[:name]}
-      label={gettext("Your name")}
-      placeholder={gettext("Type your name here ...")}
-      value={@user.name}
-    />
-
-    <.input
-      type="text"
-      field={@user_form[:avatar_url]}
-      label={gettext("Your avatar url")}
-      placeholder={gettext("Type the path to your avatar here ...")}
-      value={@user.avatar_url}
-    />
-
-    <:actions>
-      <.button type="reset">{gettext("Reset")}</.button>
-
-      <.button type="submit">{gettext("Submit changes")}</.button>
-    </:actions>
-  </.simple_form>
-</.modal>
+<.user_settings_modal user={@user} user_form={@user_form} />

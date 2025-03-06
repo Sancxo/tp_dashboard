@@ -3,6 +3,7 @@ defmodule TpDashboardWeb.DashboardLive.Index do
   import SaladUI.{Card, Separator}
   require Logger
   alias TpDashboard.Accounts
+  alias TpDashboard.Accounts.User
 
   @impl true
   def mount(%{"user_id" => user_id}, _, socket) do
@@ -38,4 +39,14 @@ defmodule TpDashboardWeb.DashboardLive.Index do
 
     {:noreply, new_socket}
   end
+
+  embed_templates("dashboard_components/*")
+
+  @doc """
+  The modal to store the form used to update the User dashboard settings.
+  """
+  attr :user, User, required: true, doc: "The User which is meant to be updated"
+  attr :user_form, Phoenix.HTML.Form, required: true, doc: "The form to validate the User data"
+
+  def user_settings_modal(assigns)
 end
