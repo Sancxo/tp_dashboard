@@ -27,6 +27,14 @@ defmodule TpDashboardWeb.Router do
     live "/users/:id", UserLive.Show, :show
     live "/users/:id/show/edit", UserLive.Show, :edit
 
+    # InvestmentLive
+    live "/investments", InvestmentLive.Index, :index
+    live "/investments/new", InvestmentLive.Index, :new
+    live "/investments/:id/edit", InvestmentLive.Index, :edit
+
+    live "/investments/:id", InvestmentLive.Show, :show
+    live "/investments/:id/show/edit", InvestmentLive.Show, :edit
+
     # DashboardLive
     live "/dashboard/:user_id", DashboardLive.Index
   end

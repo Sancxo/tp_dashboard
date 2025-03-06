@@ -6,6 +6,8 @@ defmodule TpDashboard.Accounts.User do
     field :name, :string
     field :avatar_url, :string
 
+    has_many :investments, TpDashboard.Contracts.Investment
+
     timestamps(type: :utc_datetime)
   end
 
