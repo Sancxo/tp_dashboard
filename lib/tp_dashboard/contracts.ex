@@ -34,7 +34,7 @@ defmodule TpDashboard.Contracts do
     Investment
     |> where(user_id: ^user_id)
     |> limit(5)
-    |> order_by(desc: :date)
+    |> order_by(desc: :transaction_date)
     |> Repo.all()
   end
 
