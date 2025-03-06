@@ -55,6 +55,8 @@ defmodule TpDashboardWeb do
       use Phoenix.LiveView,
         layout: {TpDashboardWeb.Layouts, :app}
 
+      on_mount(TpDashboardWeb.SetLocaleHook)
+
       unquote(html_helpers())
     end
   end
