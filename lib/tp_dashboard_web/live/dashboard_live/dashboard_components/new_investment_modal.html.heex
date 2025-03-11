@@ -1,0 +1,38 @@
+<.modal id="new-investment-modal">
+  <.header>
+    {gettext("Create a new investment here.")}
+  </.header>
+
+  <.simple_form
+    for={@investment_form}
+    phx-validate="new-investment-validate"
+    phx-submit={JS.push("new-investment-submit") |> hide_modal("new-investment-modal")}
+  >
+    <.input
+      type="text"
+      field={@investment_form[:label]}
+      label={gettext("Label")}
+      placeholder={gettext("My investement")}
+    />
+
+    <.input
+      type="number"
+      field={@investment_form[:amount]}
+      label={gettext("Amount in euros")}
+      placeholder={1_000}
+      value={1_000}
+      min={1}
+      max={1_000_000}
+    />
+
+    <:actions>
+      <.button type="reset">
+        {gettext("Reset investment")}
+      </.button>
+
+      <.button type="submit">
+        {gettext("Submit investment")}
+      </.button>
+    </:actions>
+  </.simple_form>
+</.modal>

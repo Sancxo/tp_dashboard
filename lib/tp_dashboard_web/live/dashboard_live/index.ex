@@ -1,17 +1,63 @@
 defmodule TpDashboardWeb.DashboardLive.Index do
   use TpDashboardWeb, :live_view
+
   import SaladUI.{Card, Separator}
+
   require Logger
+
   alias TpDashboard.Accounts
   alias TpDashboard.Accounts.User
+  alias TpDashboard.Contracts
+  alias TpDashboard.Contracts.Investment
 
   @impl true
   def mount(%{"user_id" => user_id}, _, socket) do
     user = Accounts.get_user!(user_id)
-
     user_form = user |> Accounts.change_user() |> to_form()
 
-    {:ok, socket |> assign(user: user, user_form: user_form)}
+    investment_form = %Investment{} |> Contracts.change_investment() |> to_form()
+
+    {:ok,
+     socket
+     |> assign(user: user, user_form: user_form, investment_form: investment_form)}
+  end
+
+  @impl true
+  def handle_params(%{"page" => current_page} = params, _uri, socket) do
+    {:ok, {investments, meta}} = Contracts.list_user_investments(params)
+
+    {first_page_link_range, last_page_link_range} =
+      Flop.Phoenix.page_link_range(3, String.to_integer(current_page), meta.total_pages)
+
+    socket =
+      socket
+      |> assign(meta: meta, page_link_range: first_page_link_range..last_page_link_range)
+      |> stream(:investments_list, investments, reset: true)
+
+    {:noreply, socket}
+  end
+
+  def handle_params(%{"user_id" => current_user_id}, _uri, socket) do
+    flop_params = %{
+      order_by: ["transaction_date"],
+      page: 1,
+      page_size: 5,
+      filters: [%{field: :user_id, op: :==, value: current_user_id}]
+    }
+
+    {:ok, {investments, meta}} =
+      Contracts.list_user_investments(flop_params)
+
+    {first_page_link_range, last_page_link_range} =
+      Flop.Phoenix.page_link_range(5, flop_params.page, meta.total_pages)
+      |> IO.inspect(label: "page_link_range")
+
+    socket =
+      socket
+      |> assign(meta: meta, page_link_range: first_page_link_range..last_page_link_range)
+      |> stream(:investments_list, investments, reset: true)
+
+    {:noreply, socket}
   end
 
   @impl true
@@ -40,6 +86,42 @@ defmodule TpDashboardWeb.DashboardLive.Index do
     {:noreply, new_socket}
   end
 
+  def handle_event(
+        "new-investment-validate",
+        %{"investment" => new_investment_params},
+        socket
+      ) do
+    investment_form =
+      %Investment{} |> Contracts.change_investment(new_investment_params) |> to_form()
+
+    {:noreply, assign(socket, investment_form: investment_form)}
+  end
+
+  def handle_event(
+        "new-investment-submit",
+        %{"investment" => new_investment_params},
+        %{assigns: %{user: user}} = socket
+      ) do
+    socket =
+      user
+      |> Contracts.create_user_investment(new_investment_params)
+      |> case do
+        {:ok, new_investment} ->
+          socket
+          |> stream_insert(:last_investments, new_investment, at: 0)
+          |> put_flash(:info, gettext("Investment successfully created."))
+
+        {:error, _} ->
+          put_flash(
+            socket,
+            :error,
+            gettext("An error occured when creating the investment. Operation aborted.")
+          )
+      end
+
+    {:noreply, socket}
+  end
+
   embed_templates("dashboard_components/*")
 
   @doc """
@@ -47,6 +129,11 @@ defmodule TpDashboardWeb.DashboardLive.Index do
   """
   attr :user, User, required: true, doc: "The User which is meant to be updated"
   attr :user_form, Phoenix.HTML.Form, required: true, doc: "The form to validate the User data"
-
   def user_settings_modal(assigns)
+
+  attr :investment_form, Phoenix.HTML.Form,
+    required: true,
+    doc: "The form to validate the Investment data"
+
+  def new_investment_modal(assigns)
 end

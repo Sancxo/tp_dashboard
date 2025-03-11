@@ -1,4 +1,4 @@
-<.header class="text-center [&_h1]:text-orange-500 [&_h1]:font-bold [&_h1]:text-4xl">
+<.tp_header>
   {gettext("Dashboard")}
 
   <:subtitle>
@@ -14,11 +14,11 @@
       {gettext("Change settings")}
     </.button>
   </:actions>
-</.header>
+</.tp_header>
 
 <.separator class="my-8" orientation="horizontal" />
 
-<div class="grid grid-cols-2">
+<div class="grid grid-cols-2 gap-4">
   <.card class="text-center">
     <.card_content class="flex justify-center mt-4">
       <img src={@user.avatar_url} class="rounded-full" height="200" width="200" />
@@ -28,6 +28,105 @@
       <.card_title>{@user.name}</.card_title>
     </.card_header>
   </.card>
+
+  <div></div>
+
+  <.card class="col-span-2 text-center flex flex-col justify-between">
+    <.card_header>
+      <.card_title>{gettext("Your investments")}</.card_title>
+    </.card_header>
+
+    <.card_content>
+      <p :if={@streams.investments_list.inserts == []}>
+        {gettext("No investments found for now.")}
+      </p>
+
+      <.table
+        :if={@streams.investments_list.inserts != []}
+        id="investments"
+        rows={@streams.investments_list}
+      >
+        <:col :let={{_, investment}} label={gettext("Id.")}>{investment.id}</:col>
+        <:col :let={{_, investment}} label={gettext("Label")}>{investment.label}</:col>
+        <:col :let={{_, investment}} label={gettext("Amount")}>{investment.amount}</:col>
+        <:col :let={{_, investment}} label={gettext("Status")}>{investment.status}</:col>
+        <:col :let={{_, investment}} label={gettext("Date")}>{investment.transaction_date}</:col>
+      </.table>
+
+      <.separator class="my-8" orientation="horizontal" />
+
+      <.tp_table :if={@streams.investments_list.inserts != []} id="investments-table">
+        <.tp_table_header>
+          <.tp_table_row>
+            <.tp_table_head>{gettext("Id.")}</.tp_table_head>
+            <.tp_table_head>{gettext("Label")}</.tp_table_head>
+            <.tp_table_head>{gettext("Amount")}</.tp_table_head>
+            <.tp_table_head>{gettext("Status")}</.tp_table_head>
+            <.tp_table_head>{gettext("Date")}</.tp_table_head>
+          </.tp_table_row>
+        </.tp_table_header>
+
+        <.tp_table_body phx-update="stream">
+          <.tp_table_row
+            :for={{stream_id, investment} <- @streams.investments_list}
+            id={stream_id}
+          >
+            <.tp_table_cell>{investment.id}</.tp_table_cell>
+            <.tp_table_cell>{investment.label}</.tp_table_cell>
+            <.tp_table_cell>{investment.amount}</.tp_table_cell>
+            <.tp_table_cell>{investment.status}</.tp_table_cell>
+            <.tp_table_cell>{investment.transaction_date}</.tp_table_cell>
+          </.tp_table_row>
+        </.tp_table_body>
+      </.tp_table>
+
+      <.tp_pagination>
+        <.tp_pagination_content>
+          <.tp_pagination_item>
+            <.tp_pagination_previous
+              :if={@meta.has_previous_page?}
+              patch={"#{Flop.Phoenix.build_path("", %{@meta.flop | page: @meta.previous_page})}"}
+            />
+          </.tp_pagination_item>
+
+          <.tp_pagination_item :if={@meta.has_previous_page? && @meta.previous_page > 1}>
+            <.tp_pagination_link patch={"#{Flop.Phoenix.build_path("", %{@meta.flop | page: 1})}"}>
+              <.tp_pagination_ellipsis />
+            </.tp_pagination_link>
+          </.tp_pagination_item>
+
+          <.tp_pagination_item :for={page_link <- @page_link_range}>
+            <.tp_pagination_link
+              patch={"#{Flop.Phoenix.build_path("", %{@meta.flop | page: page_link})}"}
+              is-active={@meta.current_page == page_link}
+            >
+              {page_link}
+            </.tp_pagination_link>
+          </.tp_pagination_item>
+
+          <.tp_pagination_item :if={@meta.has_next_page? && @meta.next_page < @meta.total_pages}>
+            <.tp_pagination_link patch={"#{Flop.Phoenix.build_path("", %{@meta.flop | page: @meta.total_pages})}"}>
+              <.tp_pagination_ellipsis />
+            </.tp_pagination_link>
+          </.tp_pagination_item>
+
+          <.tp_pagination_item>
+            <.tp_pagination_next
+              :if={@meta.has_next_page?}
+              patch={"#{Flop.Phoenix.build_path("", %{@meta.flop | page: @meta.next_page})}"}
+            />
+          </.tp_pagination_item>
+        </.tp_pagination_content>
+      </.tp_pagination>
+    </.card_content>
+
+    <.card_footer class="justify-center">
+      <.button type="button" phx-click={show_modal("new-investment-modal")}>
+        {gettext("Make a new investment")}
+      </.button>
+    </.card_footer>
+  </.card>
 </div>
 
 <.user_settings_modal user={@user} user_form={@user_form} />
+<.new_investment_modal investment_form={@investment_form} />
