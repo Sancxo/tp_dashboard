@@ -12,5 +12,7 @@ defmodule TpDashboardWeb.Layouts do
 
   import SaladUI.{DropdownMenu, Menu}
 
+  alias SaladUI.Button
+
   embed_templates "layouts/*"
 end

@@ -13,9 +13,9 @@
     <div class="flex items-center gap-4 font-semibold leading-6 text-zinc-900">
       <.dropdown_menu>
         <.dropdown_menu_trigger>
-          <SaladUI.Button.button type="button" variant="outline" size="sm">
+          <Button.button type="button" variant="outline" size="sm">
             {gettext("Change language")}
-          </SaladUI.Button.button>
+          </Button.button>
         </.dropdown_menu_trigger>
 
         <.dropdown_menu_content>
@@ -23,7 +23,6 @@
             <.menu_label>
               {gettext("Languages")}
             </.menu_label>
-
             <.menu_group class="flex flex-row justify-evenly">
               <.menu_item class={"rounded-md #{Gettext.get_locale(TpDashboardWeb.Gettext) == "fr" && "border bg-orange-100" || ""}"}>
                 <.link href="?lang=fr" class="text-lg">
@@ -40,21 +39,6 @@
           </.menu>
         </.dropdown_menu_content>
       </.dropdown_menu>
-
-      <a href="https://twitter.com/elixirphoenix" class="hover:text-zinc-700">
-        @elixirphoenix
-      </a>
-
-      <a href="https://github.com/phoenixframework/phoenix" class="hover:text-zinc-700">
-        GitHub
-      </a>
-
-      <a
-        href="https://hexdocs.pm/phoenix/overview.html"
-        class="rounded-lg bg-zinc-100 px-2 py-1 hover:bg-zinc-200/80"
-      >
-        Get Started <span aria-hidden="true">&rarr;</span>
-      </a>
     </div>
   </div>
 </header>
