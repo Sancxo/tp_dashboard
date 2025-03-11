@@ -53,6 +53,10 @@ config :tailwind,
     cd: Path.expand("../assets", __DIR__)
   ]
 
+# config :tp_dashboard, TpDashboardWeb.Gettext, allowed_locales: ~w(fr en)
+
+config :flop, repo: TpDashboard.Repo
+
 # Configures Elixir's Logger
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
