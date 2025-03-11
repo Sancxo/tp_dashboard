@@ -62,11 +62,6 @@ msgstr ""
 msgid "close"
 msgstr ""
 
-#: lib/tp_dashboard_web/live/dashboard_live/index.ex:37
-#, elixir-autogen, elixir-format
-msgid "An error occurred when updating your settings"
-msgstr ""
-
 #: lib/tp_dashboard_web/live/dashboard_live/index.html.heex:14
 #, elixir-autogen, elixir-format
 msgid "Change settings"
@@ -102,7 +97,7 @@ msgstr ""
 msgid "Your name"
 msgstr ""
 
-#: lib/tp_dashboard_web/live/dashboard_live/index.ex:32
+#: lib/tp_dashboard_web/live/dashboard_live/index.ex:65
 #, elixir-autogen, elixir-format
 msgid "Your settings have been updated successfully"
 msgstr ""
@@ -120,4 +115,90 @@ msgstr ""
 #: lib/tp_dashboard_web/components/layouts/app.html.heex:24
 #, elixir-autogen, elixir-format
 msgid "Languages"
+msgstr ""
+
+#: lib/tp_dashboard_web/live/dashboard_live/index.html.heex:51
+#: lib/tp_dashboard_web/live/dashboard_live/index.html.heex:63
+#, elixir-autogen, elixir-format
+msgid "Amount"
+msgstr ""
+
+#: lib/tp_dashboard_web/live/dashboard_live/dashboard_components/new_investment_modal.html.heex:21
+#, elixir-autogen, elixir-format
+msgid "Amount in euros"
+msgstr ""
+
+#: lib/tp_dashboard_web/live/dashboard_live/index.ex:105
+#, elixir-autogen, elixir-format
+msgid "An error occured when creating the investment. Operation aborted."
+msgstr ""
+
+#: lib/tp_dashboard_web/live/dashboard_live/dashboard_components/new_investment_modal.html.heex:3
+#, elixir-autogen, elixir-format
+msgid "Create a new investment here."
+msgstr ""
+
+#: lib/tp_dashboard_web/live/dashboard_live/index.html.heex:53
+#: lib/tp_dashboard_web/live/dashboard_live/index.html.heex:65
+#, elixir-autogen, elixir-format
+msgid "Date"
+msgstr ""
+
+#: lib/tp_dashboard_web/live/dashboard_live/index.html.heex:49
+#: lib/tp_dashboard_web/live/dashboard_live/index.html.heex:61
+#, elixir-autogen, elixir-format
+msgid "Id."
+msgstr ""
+
+#: lib/tp_dashboard_web/live/dashboard_live/index.ex:99
+#, elixir-autogen, elixir-format
+msgid "Investment successfully created."
+msgstr ""
+
+#: lib/tp_dashboard_web/live/dashboard_live/dashboard_components/new_investment_modal.html.heex:14
+#: lib/tp_dashboard_web/live/dashboard_live/index.html.heex:50
+#: lib/tp_dashboard_web/live/dashboard_live/index.html.heex:62
+#, elixir-autogen, elixir-format
+msgid "Label"
+msgstr ""
+
+#: lib/tp_dashboard_web/live/dashboard_live/index.html.heex:129
+#, elixir-autogen, elixir-format
+msgid "Make a new investment"
+msgstr ""
+
+#: lib/tp_dashboard_web/live/dashboard_live/dashboard_components/new_investment_modal.html.heex:15
+#, elixir-autogen, elixir-format
+msgid "My investement"
+msgstr ""
+
+#: lib/tp_dashboard_web/live/dashboard_live/index.html.heex:41
+#, elixir-autogen, elixir-format
+msgid "No investments found for now."
+msgstr ""
+
+#: lib/tp_dashboard_web/live/dashboard_live/dashboard_components/new_investment_modal.html.heex:30
+#, elixir-autogen, elixir-format
+msgid "Reset investment"
+msgstr ""
+
+#: lib/tp_dashboard_web/live/dashboard_live/index.html.heex:52
+#: lib/tp_dashboard_web/live/dashboard_live/index.html.heex:64
+#, elixir-autogen, elixir-format
+msgid "Status"
+msgstr ""
+
+#: lib/tp_dashboard_web/live/dashboard_live/dashboard_components/new_investment_modal.html.heex:34
+#, elixir-autogen, elixir-format
+msgid "Submit investment"
+msgstr ""
+
+#: lib/tp_dashboard_web/live/dashboard_live/index.html.heex:36
+#, elixir-autogen, elixir-format
+msgid "Your investments"
+msgstr ""
+
+#: lib/tp_dashboard_web/live/dashboard_live/index.ex:70
+#, elixir-autogen, elixir-format, fuzzy
+msgid "An error occurred when updating your settings"
 msgstr ""
