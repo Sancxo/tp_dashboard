@@ -8,20 +8,36 @@
         v{Application.spec(:phoenix, :vsn)}
       </p>
     </div>
-    <div class="flex items-center gap-4 font-semibold leading-6 text-zinc-900">
-      <a href="https://twitter.com/elixirphoenix" class="hover:text-zinc-700">
-        @elixirphoenix
-      </a>
-      <a href="https://github.com/phoenixframework/phoenix" class="hover:text-zinc-700">
-        GitHub
-      </a>
-      <a
-        href="https://hexdocs.pm/phoenix/overview.html"
-        class="rounded-lg bg-zinc-100 px-2 py-1 hover:bg-zinc-200/80"
-      >
-        Get Started <span aria-hidden="true">&rarr;</span>
-      </a>
-    </div>
+
+    <.dropdown_menu>
+      <.dropdown_menu_trigger>
+        <SaladUI.Button.button type="button" variant="outline" size="sm">
+          {gettext("CHange language")}
+        </SaladUI.Button.button>
+      </.dropdown_menu_trigger>
+
+      <.dropdown_menu_content>
+        <.menu class="text-center">
+          <.menu_label>
+            {gettext("Select a language")}
+          </.menu_label>
+
+          <.menu_group class="flex flex-row justify-evenly">
+            <.menu_item class={"rounded-md #{Gettext.get_locale(TpDashboardWeb.Gettext) == "en" && "border bg-orange-500" || ""} "} >
+              <.link href="?lang=en" class="text-lg">
+                🇬🇧
+              </.link>
+            </.menu_item>
+
+            <.menu_item class={"rounded-md #{Gettext.get_locale(TpDashboardWeb.Gettext) == "fr" && "border bg-orange-500"  || ""} "} >
+              <.link href="?lang=fr" class="text-lg">
+                🇫🇷
+              </.link>
+            </.menu_item>
+          </.menu_group>
+        </.menu>
+      </.dropdown_menu_content>
+    </.dropdown_menu>
   </div>
 </header>
 <main class="px-4 py-20 sm:px-6 lg:px-8">

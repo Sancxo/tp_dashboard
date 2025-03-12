@@ -34,8 +34,17 @@ defmodule TpDashboard.Contracts do
     Investment
     |> where(user_id: ^user_id)
     |> limit(5)
-    |> order_by(desc: :date)
+    |> order_by(desc: :transaction_date)
     |> Repo.all()
+  end
+
+  def list_user_investments(flop_params) do
+    Flop.validate_and_run(
+      Investment,
+      flop_params,
+      for: Investment,
+      replace_invalid_params: true
+    )
   end
 
   @doc """
@@ -83,6 +92,25 @@ defmodule TpDashboard.Contracts do
   """
   def create_investment(attrs \\ %{}) do
     %Investment{}
+    |> Investment.changeset(attrs)
+    |> Repo.insert()
+  end
+
+    @doc """
+  Creates a investment for a specific user.
+
+  ## Examples
+
+      iex> create_user_investment(%User{id: 123}, %{field: value})
+      {:ok, %Investment{user_id: 123}}
+
+      iex> create_user_investment%User{id: 123}, (%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_user_investment(user, attrs \\ %{}) do
+    user
+    |> Ecto.build_assoc(:investments)
     |> Investment.changeset(attrs)
     |> Repo.insert()
   end

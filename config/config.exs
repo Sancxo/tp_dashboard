@@ -22,6 +22,9 @@ config :tp_dashboard, TpDashboardWeb.Endpoint,
   pubsub_server: TpDashboard.PubSub,
   live_view: [signing_salt: "s4CumESM"]
 
+config :tp_dashboard, TpDashboardWeb.Gettext, allowed_locales: ["en", "fr"]
+config :flop, repo: TpDashboard.Repo
+
 # Configures the mailer
 #
 # By default it uses the "Local" adapter which stores the emails

@@ -19,6 +19,13 @@ defmodule TpDashboardWeb.Router do
 
     get "/", PageController, :home
 
+    # DashboardLive
+    live "/dashboard/:user_id", DashboardLive.Index
+  end
+
+  scope "/admin", TpDashboardWeb do
+    pipe_through :browser
+
     # UserLive
     live "/users", UserLive.Index, :index
     live "/users/new", UserLive.Index, :new
@@ -34,9 +41,6 @@ defmodule TpDashboardWeb.Router do
 
     live "/investments/:id", InvestmentLive.Show, :show
     live "/investments/:id/show/edit", InvestmentLive.Show, :edit
-
-    # DashboardLive
-    live "/dashboard/:user_id", DashboardLive.Index
   end
 
   # Other scopes may use custom stacks.

@@ -10,5 +10,7 @@ defmodule TpDashboardWeb.Layouts do
   """
   use TpDashboardWeb, :html
 
+  import SaladUI.{DropdownMenu, Menu}
+
   embed_templates "layouts/*"
 end

@@ -1,7 +1,7 @@
 <.header>
   Listing Investments
   <:actions>
-    <.link patch={~p"/investments/new"}>
+    <.link patch={~p"/admin/investments/new"}>
       <.button>New Investment</.button>
     </.link>
   </:actions>
@@ -10,7 +10,7 @@
 <.table
   id="investments"
   rows={@streams.investments}
-  row_click={fn {_id, investment} -> JS.navigate(~p"/investments/#{investment}") end}
+  row_click={fn {_id, investment} -> JS.navigate(~p"/admin/investments/#{investment}") end}
 >
   <:col :let={{_id, investment}} label="Label">{investment.label}</:col>
   <:col :let={{_id, investment}} label="Amount">{investment.amount}</:col>
@@ -18,9 +18,9 @@
   <:col :let={{_id, investment}} label="Status">{investment.status}</:col>
   <:action :let={{_id, investment}}>
     <div class="sr-only">
-      <.link navigate={~p"/investments/#{investment}"}>Show</.link>
+      <.link navigate={~p"/admin/investments/#{investment}"}>Show</.link>
     </div>
-    <.link patch={~p"/investments/#{investment}/edit"}>Edit</.link>
+    <.link patch={~p"/admin/investments/#{investment}/edit"}>Edit</.link>
   </:action>
   <:action :let={{id, investment}}>
     <.link
@@ -32,13 +32,13 @@
   </:action>
 </.table>
 
-<.modal :if={@live_action in [:new, :edit]} id="investment-modal" show on_cancel={JS.patch(~p"/investments")}>
+<.modal :if={@live_action in [:new, :edit]} id="investment-modal" show on_cancel={JS.patch(~p"/admin/investments")}>
   <.live_component
     module={TpDashboardWeb.InvestmentLive.FormComponent}
     id={@investment.id || :new}
     title={@page_title}
     action={@live_action}
     investment={@investment}
-    patch={~p"/investments"}
+    patch={~p"/admin/investments"}
   />
 </.modal>

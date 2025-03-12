@@ -2,7 +2,7 @@
   Investment {@investment.id}
   <:subtitle>This is a investment record from your database.</:subtitle>
   <:actions>
-    <.link patch={~p"/investments/#{@investment}/show/edit"} phx-click={JS.push_focus()}>
+    <.link patch={~p"/admin/investments/#{@investment}/show/edit"} phx-click={JS.push_focus()}>
       <.button>Edit investment</.button>
     </.link>
   </:actions>
@@ -15,15 +15,15 @@
   <:item title="Status">{@investment.status}</:item>
 </.list>
 
-<.back navigate={~p"/investments"}>Back to investments</.back>
+<.back navigate={~p"/admin/investments"}>Back to investments</.back>
 
-<.modal :if={@live_action == :edit} id="investment-modal" show on_cancel={JS.patch(~p"/investments/#{@investment}")}>
+<.modal :if={@live_action == :edit} id="investment-modal" show on_cancel={JS.patch(~p"/admin/investments/#{@investment}")}>
   <.live_component
     module={TpDashboardWeb.InvestmentLive.FormComponent}
     id={@investment.id}
     title={@page_title}
     action={@live_action}
     investment={@investment}
-    patch={~p"/investments/#{@investment}"}
+    patch={~p"/admin/investments/#{@investment}"}
   />
 </.modal>

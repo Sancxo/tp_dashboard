@@ -1,4 +1,4 @@
-<.header class="text-center [&_h1]:text-orange-500 [&_h1]:font-bold [&_h1]:text-4xl">
+<.tp_header class="text-center [&_h1]:text-orange-500 [&_h1]:font-bold [&_h1]:text-4xl">
   {gettext("Dashboard")}
 
   <:subtitle>
@@ -6,28 +6,99 @@
   </:subtitle>
 
   <:actions>
-    <.button
+    <.tp_button
       class="bg-orange-500 text-white"
       type="button"
       phx-click={show_modal("user-settings-modal")}
     >
       {gettext("Change settings")}
-    </.button>
+    </.tp_button>
   </:actions>
-</.header>
+</.tp_header>
 
 <.separator class="my-8" orientation="horizontal" />
 
 <div class="grid grid-cols-2">
-  <.card class="text-center">
-    <.card_content class="flex justify-center mt-4">
+  <.tp_card class="text-center">
+    <.tp_card_content class="flex justify-center mt-4">
       <img src={@user.avatar_url} class="rounded-full" height="200" width="200" />
-    </.card_content>
+    </.tp_card_content>
 
-    <.card_header>
-      <.card_title>{@user.name}</.card_title>
-    </.card_header>
-  </.card>
+    <.tp_card_header>
+      <.tp_card_title>{@user.name}</.tp_card_title>
+    </.tp_card_header>
+  </.tp_card>
 </div>
 
+<.tp_card class="mt-4">
+  <.tp_card_content>
+  
+    <.tp_card_header class="pt-6 text-center font-bold text-xl [&_h1]:text-black [&_h1]:font-bold [&_h1]:text-md">
+      {gettext("Your investments")}
+    </.tp_card_header>
+  
+    <div class="text-center font-bold text-lg">
+      {gettext("Total : ")} {@total_amount}
+    </div>
+    <Table.table>
+      <Table.table_header>
+        <Table.table_row>
+          <Table.table_head class="text-black">Label</Table.table_head>
+          <Table.table_head class="text-black">Amount</Table.table_head>
+          <Table.table_head class="text-black">Date</Table.table_head>
+          <Table.table_head class="text-black">Status</Table.table_head>
+        </Table.table_row>
+    </Table.table_header>
+    <Table.table_body>
+        <Table.table_row :for={{id, investments} <- @streams.investments} id={id}>
+          <Table.table_cell class="font-medium">{investments.label}</Table.table_cell>
+          <Table.table_cell class="font-medium">{investments.amount}</Table.table_cell>
+          <Table.table_cell class="font-medium">{investments.transaction_date}</Table.table_cell>
+          <Table.table_cell class="font-medium">{investments.status}</Table.table_cell>
+        </Table.table_row>
+    </Table.table_body>
+  </Table.table>
+    <div class="flex justify-center mt-4">
+      <.tp_button
+          class="text-white"
+          type="button"
+          phx-click={show_modal("add-investment-modal")}
+      >
+        {gettext("Add an investment")}
+      </.tp_button>
+    </div>
+  </.tp_card_content>
+
+  <.pagination>
+    <.pagination_content>
+      <.pagination_item :if={@meta.has_previous_page?}>
+        <.pagination_previous patch={"#{Flop.Phoenix.build_path("", %{@meta.flop | page: @meta.previous_page})}"} /> 
+      </.pagination_item>
+
+      <.pagination_item :if={@meta.current_page > 2}>
+        <.pagination_link patch={"#{Flop.Phoenix.build_path("", %{@meta.flop | page: 1})}"}>
+          <.pagination_ellipsis />
+        </.pagination_link>
+      </.pagination_item>
+
+      <.pagination_item :for={page <- @page_link_range}>
+        <.pagination_link patch={"#{Flop.Phoenix.build_path("", %{@meta.flop | page: page})}"} is-active={page == @meta.current_page}>{page}</.pagination_link>
+      </.pagination_item>
+      
+      <.pagination_item :if={@meta.current_page < @meta.total_pages - 1}>
+        <.pagination_link patch={"#{Flop.Phoenix.build_path("", %{@meta.flop | page: @meta.total_pages})}"}>
+          <.pagination_ellipsis/>
+        </.pagination_link>
+      </.pagination_item>    
+
+      <.pagination_item
+        :if={@meta.has_next_page?}>
+        <.pagination_next patch={"#{Flop.Phoenix.build_path("", %{@meta.flop | page: @meta.next_page})}"}  />
+      </.pagination_item>
+    </.pagination_content>
+  </.pagination>
+</.tp_card>
+
+
 <.user_settings_modal user={@user} user_form={@user_form} />
+<.add_investment_modal investment_form={@investment_form} />

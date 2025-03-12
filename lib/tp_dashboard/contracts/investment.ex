@@ -2,6 +2,12 @@ defmodule TpDashboard.Contracts.Investment do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @derive {
+    Flop.Schema,
+    filterable: [:label, :status, :amount, :transaction_date, :user_id],
+    sortable: [:label, :status, :amount, :transaction_date],
+  }
+
   schema "investments" do
     field :label, :string
     field :status, Ecto.Enum, values: [:processed, :rejected, :pending], default: :pending
