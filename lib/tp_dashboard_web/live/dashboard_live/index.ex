@@ -23,11 +23,10 @@ defmodule TpDashboardWeb.DashboardLive.Index do
   end
 
   @impl true
-  def handle_params(%{"page" => current_page} = params, _uri, socket) do
-    {:ok, {investments, meta}} = Contracts.list_user_investments(params)
+  def handle_params(%{"page" => current_page} = new_params, _uri, socket) do
+    {:ok, {investments, meta}} = Contracts.list_user_investments(new_params)
 
-    {first_page_link_range, last_page_link_range} =
-      Flop.Phoenix.page_link_range(3, String.to_integer(current_page), meta.total_pages)
+    {first_page_link_range, last_page_link_range} = Flop.Phoenix.page_link_range(3, String.to_integer(current_page), meta.total_pages)
 
     socket =
       socket
@@ -40,17 +39,15 @@ defmodule TpDashboardWeb.DashboardLive.Index do
   def handle_params(%{"user_id" => current_user_id}, _uri, socket) do
     flop_params = %{
       order_by: ["transaction_date"],
+      order_directions: [:desc],
       page: 1,
       page_size: 5,
       filters: [%{field: :user_id, op: :==, value: current_user_id}]
     }
 
-    {:ok, {investments, meta}} =
-      Contracts.list_user_investments(flop_params)
+    {:ok, {investments, meta}} = Contracts.list_user_investments(flop_params)
 
-    {first_page_link_range, last_page_link_range} =
-      Flop.Phoenix.page_link_range(5, flop_params.page, meta.total_pages)
-      |> IO.inspect(label: "page_link_range")
+    {first_page_link_range, last_page_link_range} = Flop.Phoenix.page_link_range(3, flop_params.page, meta.total_pages)
 
     socket =
       socket
@@ -100,16 +97,16 @@ defmodule TpDashboardWeb.DashboardLive.Index do
   def handle_event(
         "new-investment-submit",
         %{"investment" => new_investment_params},
-        %{assigns: %{user: user}} = socket
+        %{assigns: %{user: user, meta: meta}} = socket
       ) do
     socket =
       user
       |> Contracts.create_user_investment(new_investment_params)
       |> case do
-        {:ok, new_investment} ->
+        {:ok, _new_investment} ->
           socket
-          |> stream_insert(:last_investments, new_investment, at: 0)
           |> put_flash(:info, gettext("Investment successfully created."))
+          |> push_patch(to: "/dashboard/#{user.id}#{Flop.Phoenix.build_path("", %{meta.flop | page: 1})}")
 
         {:error, _} ->
           put_flash(

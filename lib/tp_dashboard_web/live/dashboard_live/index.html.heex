@@ -6,13 +6,12 @@
   </:subtitle>
 
   <:actions>
-    <.button
-      class="bg-orange-500 text-white"
+    <.tp_button
       type="button"
       phx-click={show_modal("user-settings-modal")}
     >
       {gettext("Change settings")}
-    </.button>
+    </.tp_button>
   </:actions>
 </.tp_header>
 
@@ -41,20 +40,6 @@
         {gettext("No investments found for now.")}
       </p>
 
-      <.table
-        :if={@streams.investments_list.inserts != []}
-        id="investments"
-        rows={@streams.investments_list}
-      >
-        <:col :let={{_, investment}} label={gettext("Id.")}>{investment.id}</:col>
-        <:col :let={{_, investment}} label={gettext("Label")}>{investment.label}</:col>
-        <:col :let={{_, investment}} label={gettext("Amount")}>{investment.amount}</:col>
-        <:col :let={{_, investment}} label={gettext("Status")}>{investment.status}</:col>
-        <:col :let={{_, investment}} label={gettext("Date")}>{investment.transaction_date}</:col>
-      </.table>
-
-      <.separator class="my-8" orientation="horizontal" />
-
       <.tp_table :if={@streams.investments_list.inserts != []} id="investments-table">
         <.tp_table_header>
           <.tp_table_row>
@@ -80,11 +65,10 @@
         </.tp_table_body>
       </.tp_table>
 
-      <.tp_pagination>
+      <.tp_pagination :if={@streams.investments_list.inserts != []}>
         <.tp_pagination_content>
-          <.tp_pagination_item>
+          <.tp_pagination_item :if={@meta.has_previous_page?}>
             <.tp_pagination_previous
-              :if={@meta.has_previous_page?}
               patch={"#{Flop.Phoenix.build_path("", %{@meta.flop | page: @meta.previous_page})}"}
             />
           </.tp_pagination_item>
@@ -110,9 +94,8 @@
             </.tp_pagination_link>
           </.tp_pagination_item>
 
-          <.tp_pagination_item>
+          <.tp_pagination_item :if={@meta.has_next_page?}>
             <.tp_pagination_next
-              :if={@meta.has_next_page?}
               patch={"#{Flop.Phoenix.build_path("", %{@meta.flop | page: @meta.next_page})}"}
             />
           </.tp_pagination_item>
@@ -121,9 +104,9 @@
     </.card_content>
 
     <.card_footer class="justify-center">
-      <.button type="button" phx-click={show_modal("new-investment-modal")}>
+      <.tp_button type="button" phx-click={show_modal("new-investment-modal")}>
         {gettext("Make a new investment")}
-      </.button>
+      </.tp_button>
     </.card_footer>
   </.card>
 </div>
