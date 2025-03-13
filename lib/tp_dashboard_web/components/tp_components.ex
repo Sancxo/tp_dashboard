@@ -19,13 +19,34 @@ defmodule TpDashboardWeb.TpComponents do
 
   def tp_header(assigns) do
     ~H"""
-    <.header class={"text-center [&_h1]:text-green-500 [&_h1]:font-bold [&_h1]:text-4xl #{@class}"}>
+    <.header class={"text-center [&_h1]:text-orange-500 [&_h1]:font-bold [&_h1]:text-4xl #{@class}"}>
       {render_slot(@inner_block)}
 
       <:subtitle>{render_slot(@subtitle)}</:subtitle>
 
       <:actions>{render_slot(@actions)}</:actions>
     </.header>
+    """
+  end
+
+  @doc """
+  Renders a customized button.
+
+  ## Examples
+
+      <.tp_button>Send!</.tp_button>
+      <.tp_button phx-click="go" class="ml-2">Send!</.tp_button>
+  """
+  attr :type, :string, default: nil
+  attr :class, :string, default: nil
+  attr :rest, :global, include: ~w(disabled form name value)
+
+  slot :inner_block, required: true
+  def tp_button(assigns) do
+    ~H"""
+    <.button class={"hover:bg-orange-500 #{@class}"} type={@type} {@rest}>
+      {render_slot(@inner_block)}
+    </.button>
     """
   end
 
