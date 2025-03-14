@@ -20,7 +20,9 @@ defmodule TpDashboardWeb.Router do
     get "/", PageController, :home
 
     # DashboardLive
-    live "/dashboard/:user_id", DashboardLive.Index
+    live "/dashboard/:user_id", DashboardLive.Index, :index
+    live "/dashboard/:user_id/create_investment", DashboardLive.Index, :create_investment
+    live "/dashboard/:user_id/update_investment/:investment_id", DashboardLive.Index, :update_investment
   end
 
   scope "/admin", TpDashboardWeb do

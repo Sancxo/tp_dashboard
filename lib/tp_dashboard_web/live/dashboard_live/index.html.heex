@@ -31,30 +31,43 @@
 </div>
 
 <.tp_card class="mt-4">
-  <.tp_card_content>
-  
     <.tp_card_header class="pt-6 text-center font-bold text-xl [&_h1]:text-black [&_h1]:font-bold [&_h1]:text-md">
       {gettext("Your investments")}
-    </.tp_card_header>
-  
+    </.tp_card_header> 
+
+  <.tp_card_content :if={@streams.investments_list.inserts == []}>
+      No investment found.
+  </.tp_card_content>
+    
+  <.tp_card_content :if={@streams.investments_list.inserts != []}>
     <div class="text-center font-bold text-lg">
       {gettext("Total : ")} {@total_amount}
     </div>
-    <Table.table>
+    <Table.table :if={@streams.investments_list.inserts != []}>
       <Table.table_header>
         <Table.table_row>
           <Table.table_head class="text-black">Label</Table.table_head>
           <Table.table_head class="text-black">Amount</Table.table_head>
           <Table.table_head class="text-black">Date</Table.table_head>
           <Table.table_head class="text-black">Status</Table.table_head>
+            <Table.table_head class="text-black">Edit</Table.table_head>
         </Table.table_row>
     </Table.table_header>
     <Table.table_body>
-        <Table.table_row :for={{id, investments} <- @streams.investments} id={id}>
-          <Table.table_cell class="font-medium">{investments.label}</Table.table_cell>
-          <Table.table_cell class="font-medium">{investments.amount}</Table.table_cell>
-          <Table.table_cell class="font-medium">{investments.transaction_date}</Table.table_cell>
-          <Table.table_cell class="font-medium">{investments.status}</Table.table_cell>
+        <Table.table_row :for={{id, investment} <- @streams.investments_list} id={id}>
+          <Table.table_cell class="font-medium">{investment.label}</Table.table_cell>
+          <Table.table_cell class="font-medium">{investment.amount}</Table.table_cell>
+          <Table.table_cell class="font-medium">{investment.transaction_date}</Table.table_cell>
+          <Table.table_cell class="font-medium">{investment.status}</Table.table_cell>
+          <Table.table_cell>
+            <.tp_button
+              class="text-black"
+              type="button"
+              phx-click={JS.patch("/dashboard/#{@user.id}/update_investment/#{investment.id}")}
+            >
+              {gettext("Edit")}
+            </.tp_button>
+          </Table.table_cell>
         </Table.table_row>
     </Table.table_body>
   </Table.table>
@@ -62,7 +75,7 @@
       <.tp_button
           class="text-white"
           type="button"
-          phx-click={show_modal("add-investment-modal")}
+          phx-click={JS.patch("/dashboard/#{@user.id}/create_investment")}
       >
         {gettext("Add an investment")}
       </.tp_button>
@@ -101,4 +114,4 @@
 
 
 <.user_settings_modal user={@user} user_form={@user_form} />
-<.add_investment_modal investment_form={@investment_form} />
+<.investment_form_modal user={@user} live_action={@live_action} investment={@investment}/>

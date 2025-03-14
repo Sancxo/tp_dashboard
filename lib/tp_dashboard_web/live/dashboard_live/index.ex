@@ -11,6 +11,7 @@ defmodule TpDashboardWeb.DashboardLive.Index do
   alias TpDashboard.Contracts.Investment
 
   alias SaladUI.Table
+  alias TpDashboardWeb.DashboardLive.InvestmentFormComponent
 
   @impl true
   def mount(%{"user_id" => user_id}, _, socket) do
@@ -18,49 +19,15 @@ defmodule TpDashboardWeb.DashboardLive.Index do
     total_amount = Contracts.count_total_user_investments(user_id)
 
     user_form = user |> Accounts.change_user() |> to_form()
-    investment_form = %Investment{} |> Contracts.change_investment() |> to_form()
-    investment = %Investment{}
 
-    socket =
-      socket
-      |> assign(user: user, user_form: user_form, investment_form: investment_form, investment: investment, total_amount: total_amount)
+    {:ok, socket
+    |> assign(user: user, user_form: user_form, investment: nil, total_amount: total_amount)}
 
-    {:ok, socket}
   end
 
   @impl true
-  def handle_params(%{"page" => current_page} = new_params, _url, socket) do
-    {:ok, {investments, meta}} = Contracts.list_user_investments(new_params)
-
-    {first_page_link_range, last_page_link_range} = Flop.Phoenix.page_link_range(3, String.to_integer(current_page), meta.total_pages)
-    socket =
-      socket
-      |> assign(meta: meta, page_link_range: first_page_link_range..last_page_link_range)
-      |> stream(:investments, investments, reset: true)
-
-      {:noreply, socket}
-  end
-
-  def handle_params(%{"user_id" => current_user_id}, _uri, socket) do
-    flop_params = %{
-      order_by: ["transaction_date"],
-      order_directions: ["desc"],
-      page: 1,
-      page_size: 5,
-      filters: [%{field: :user_id, op: :==, value: current_user_id}]
-    }
-
-    {:ok, {investments, meta}} = Contracts.list_user_investments(flop_params)
-    meta |> IO.inspect(label: "meta")
-
-    {first_page_link_range, last_page_link_range} = Flop.Phoenix.page_link_range(3, flop_params.page, meta.total_pages)
-
-    socket =
-      socket
-      |> assign(meta: meta, page_link_range: first_page_link_range..last_page_link_range)
-      |> stream(:investments, investments, reset: true)
-
-    {:noreply, socket}
+def handle_params(url_params, _, %{assigns: %{live_action: live_action}} = socket) do
+    {:noreply, apply_action(socket, live_action, url_params)}
   end
 
 
@@ -90,32 +57,6 @@ defmodule TpDashboardWeb.DashboardLive.Index do
     {:noreply, new_socket}
   end
 
-  @impl true
-  def handle_event("investment-validate", %{"investment" => investment_params}, %{assigns: %{investment: investment}} = socket) do
-    investment_form = investment |> Contracts.change_investment(investment_params) |> to_form(action: :validate)
-
-    {:noreply, socket |> assign(investment_form: investment_form)}
-  end
-
-  def handle_event("investment-submit", %{"investment" => investment_params}, %{assigns: %{user: user}} = socket) do
-    new_socket =
-      user
-      |> Contracts.create_user_investment(investment_params)
-      |> case do
-        {:ok, new_investment} ->
-          socket
-          |> stream_insert(:investments, new_investment)
-          |> put_flash(:info, gettext("Your investment has been added successfully"))
-
-        {:error, _} ->
-          Logger.error("An error occurred when adding investment for user with id #{user.id}")
-
-          put_flash(socket, :error, gettext("An error occurred when adding an investment"))
-      end
-
-    {:noreply, new_socket}
-  end
-
   embed_templates("dashboard_components/*")
 
   @doc """
@@ -126,8 +67,63 @@ defmodule TpDashboardWeb.DashboardLive.Index do
 
   def user_settings_modal(assigns)
 
-  attr :investment_form, Phoenix.HTML.Form, required: true, doc: "The form to validate the Investment data"
+  attr :live_action, :atom, doc: "Live action inheaderited from router"
+  attr :user, :any, required: true, doc: "The User for which the investments are being displayed"
+  attr :investment, Investment, default: nil, doc: "The form to validate the Investment data"
 
-  def add_investment_modal(assigns)
 
+  def investment_form_modal(assigns) do
+    ~H"""
+    <.tp_modal :if={@live_action in [:create_investment, :update_investment]} id="investment-form-modal" show={true} on_cancel={JS.patch("/dashboard/#{@user.id}")}>
+      <h3>Add  an investment</h3>
+
+      <.live_component
+        module={InvestmentFormComponent}
+        investment={@investment}
+        user={@user}
+        live_action={@live_action}
+        id={"investment-form"} />
+    </.tp_modal>
+    """
+  end
+
+  defp apply_action(socket, :create_investment, _params), do: assign(socket, investment: %Investment{})
+
+  defp apply_action(socket, :update_investment, %{"investment_id" => investment_id}) do
+    investment = Contracts.get_investment!(investment_id)
+
+    assign(socket, investment: investment)
+  end
+
+
+
+  defp apply_action(socket, :index, %{"page" => current_page} = params) do
+    {:ok, {investments, meta}} = Contracts.list_user_investments(params)
+
+    {first_page_link_range, last_page_link_range} = Flop.Phoenix.page_link_range(3, String.to_integer(current_page), meta.total_pages)
+
+    socket
+    |> assign(meta: meta, page_link_range: first_page_link_range..last_page_link_range)
+    |> stream(:investments_list, investments, reset: true)
+  end
+
+  defp apply_action(socket, :index, %{"user_id" => user_id}) do
+    flop_params = %{
+      order_by: ["transaction_date"],
+      order_directions: [:desc],
+      page: 1,
+      page_size: 5,
+      filters: [%{field: :user_id, op: :==, value: user_id}]
+    }
+
+    {:ok, {investments, meta}} = Contracts.list_user_investments(flop_params)
+
+    {first_page_link_range, last_page_link_range} = Flop.Phoenix.page_link_range(3, flop_params.page, meta.total_pages)
+
+    socket
+    |> assign(meta: meta, page_link_range: first_page_link_range..last_page_link_range)
+    |> stream(:investments_list, investments, reset: true)
+  end
+
+  defp apply_action(socket, _, _), do: socket
 end
